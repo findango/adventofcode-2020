@@ -1,6 +1,7 @@
 // See https://adventofcode.com/2020/day/9
 
 import { min, max, sum, toInteger } from 'lodash';
+import { any, permutations } from 'itertools';
 import raw_input from './input/input_09.txt';
 
 const exampleInput = `35
@@ -24,25 +25,14 @@ const exampleInput = `35
 309
 576`;
 
-const hasSummingPair = (target, nums) => {
-    for (let i = 0; i < nums.length; i++) {
-        for (let j = i; j < nums.length; j++) {
-            if (nums[i] + nums[j] === target) {
-                return true;
-            }
-        }
-    }
-    return false;
-};
-
 const findMismatch = (windowSize, nums) => {
-    const window = nums.slice(0, windowSize);
-    for (let i = windowSize; i < nums.length; i++) {
-        if (!hasSummingPair(nums[i], window)) {
-            return nums[i];
+    for (let i = 0; i < nums.length; i++) {
+        const window = nums.slice(i, i + windowSize);
+        const target = nums[i + windowSize];
+        const pairs = permutations(window, 2);
+        if (!any(pairs, (p) => sum(p) === target)) {
+            return target;
         }
-        window.shift();
-        window.push(nums[i]);
     }
     return null;
 };
